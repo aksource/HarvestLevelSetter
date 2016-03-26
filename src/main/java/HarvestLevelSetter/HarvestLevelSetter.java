@@ -31,7 +31,7 @@ public class HarvestLevelSetter {
     private static String[] toolShovel;
     private static String[] toolAxe;
 
-    private static final Logger LOGGER = Logger.getLogger("HarvestLevelSetter");
+    private static final Logger LOGGER = Logger.getLogger(HarvestLevelSetter.class.getSimpleName());
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
