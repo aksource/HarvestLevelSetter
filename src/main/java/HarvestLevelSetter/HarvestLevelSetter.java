@@ -1,5 +1,6 @@
 package HarvestLevelSetter;
 
+import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -76,13 +77,17 @@ public class HarvestLevelSetter {
 			blockNameAndLv = blocklist[i].split(",");
 			if(blockNameAndLv.length < 2)continue;
 			block = GameData.getBlockRegistry().getObject(blockNameAndLv[0]);
-			meta = getInt(blockNameAndLv[2]);
 			lv = getInt(blockNameAndLv[1]);
 			if(block != null && lv >=0){
+				float blockHardness = block.blockHardness;
+				if (blockHardness < 0) {
+					block.blockHardness = Blocks.obsidian.blockHardness;
+				}
 				if(blockNameAndLv.length < 3){
 					block.setHarvestLevel(toolKind, lv);
 					LOGGER.fine(String.format("#Block %s %s %d", block.getLocalizedName(), toolKind, lv));
 				}else{
+					meta = getInt(blockNameAndLv[2]);
 					block.setHarvestLevel(toolKind, lv, block.getStateFromMeta(meta));
 					LOGGER.fine(String.format("#Block %s %s %d %d", block.getLocalizedName(), toolKind, lv, meta));
 				}

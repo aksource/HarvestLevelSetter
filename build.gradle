@@ -2,8 +2,12 @@ sourceSets.main {
     java.srcDirs project.projectDir.name
     resources.srcDirs project.projectDir.name
 }
-
-version = "1.8-1.6.1"
+jar {
+    manifest {
+        attributes 'FMLAT' : 'harvestlevelsetter_at.cfg'
+    }
+}
+version = "1.8-1.7.1"
 minecraft {
     // replacing stuff in the source
     replace '@VERSION@', project.version
