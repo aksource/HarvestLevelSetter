@@ -1,6 +1,7 @@
 package HarvestLevelSetter;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -75,13 +76,17 @@ public class HarvestLevelSetter {
             blockNameAndLv = blocklist[i].split(",");
             if (blockNameAndLv.length < 2) continue;
             block = Block.REGISTRY.getObject(new ResourceLocation(blockNameAndLv[0]));
-            meta = getInt(blockNameAndLv[2]);
             lv = getInt(blockNameAndLv[1]);
             if (block != null && lv >= 0) {
+                float blockHardness = block.blockHardness;
+                if (blockHardness < 0) {
+                    block.blockHardness = Blocks.OBSIDIAN.blockHardness;
+                }
                 if (blockNameAndLv.length < 3) {
                     block.setHarvestLevel(toolKind, lv);
                     LOGGER.fine(String.format("#Block %s %s %d", block.getLocalizedName(), toolKind, lv));
                 } else {
+                    meta = getInt(blockNameAndLv[2]);
                     block.setHarvestLevel(toolKind, lv, block.getStateFromMeta(meta));
                     LOGGER.fine(String.format("#Block %s %s %d %d", block.getLocalizedName(), toolKind, lv, meta));
                 }
