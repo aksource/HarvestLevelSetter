@@ -2,10 +2,12 @@ package HarvestLevelSetter;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
@@ -30,6 +32,8 @@ public class HarvestLevelSetter {
     private static String[] toolPickaxe;
     private static String[] toolShovel;
     private static String[] toolAxe;
+
+    private static final float BLOCK_OBSIDEN_HARDNESS = ObfuscationReflectionHelper.getPrivateValue(Block.class, Blocks.obsidian,  20);;
 
     private static final Logger LOGGER = Logger.getLogger(HarvestLevelSetter.class.getSimpleName());
 
@@ -75,13 +79,17 @@ public class HarvestLevelSetter {
             blockNameAndLv = blocklist[i].split(",");
             if (blockNameAndLv.length < 2) continue;
             block = GameData.getBlockRegistry().getObject(blockNameAndLv[0]);
-            meta = getInt(blockNameAndLv[2]);
             lv = getInt(blockNameAndLv[1]);
             if (block != null && lv >= 0) {
+                float blockHardness = ObfuscationReflectionHelper.getPrivateValue(Block.class, block,  20);
+                if (blockHardness < 0) {
+                    ObfuscationReflectionHelper.setPrivateValue(Block.class, block, BLOCK_OBSIDEN_HARDNESS, 20);
+                }
                 if (blockNameAndLv.length < 3) {
                     block.setHarvestLevel(toolKind, lv);
                     LOGGER.fine(String.format("#Block %s %s %d", block.getLocalizedName(), toolKind, lv));
                 } else {
+                    meta = getInt(blockNameAndLv[2]);
                     block.setHarvestLevel(toolKind, lv, meta);
                     LOGGER.fine(String.format("#Block %s %s %d %d", block.getLocalizedName(), toolKind, lv, meta));
                 }
